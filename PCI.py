@@ -11,6 +11,7 @@ import re
 def exam_region(source_code, region):
     # Convert source code to string
     source_code_str = str(source_code)
+    region = region.upper()
 
     # Type of information
     name = ['Concurso']
@@ -22,13 +23,9 @@ def exam_region(source_code, region):
     combinacao_concursos = []
 
     # Select the region
-    if region == 'nacional':
+    if region == 'NACIONAL':
         initial_tag = source_code_str.find('<h2>NACIONAL</h2>') + len('<h2>NACIONAL</h2>')
         final_tag = source_code_str.find('<h2>REGIÃO SUDESTE</h2>') + len('<h2>REGIÃO SUDESTE</h2>')
-
-    elif region == 'CE':
-        initial_tag = source_code_str.find('<div class="uf">CEARÁ</div>') + len('<div class="uf">CEARÁ</div>')
-        final_tag = source_code_str.find('<div class="uf">MARANHÃO</div>') + len('<div class="uf">MARANHÃO</div>')
 
     elif region == 'SP':
         initial_tag = source_code_str.find('<div class="uf">SÃO PAULO</div>') + len('<div class="uf">SÃO PAULO</div>')
@@ -49,6 +46,10 @@ def exam_region(source_code, region):
     elif region == 'PR':
         initial_tag = source_code_str.find('<div class="uf">PARANÁ</div>') + len('<div class="uf">PARANÁ</div>')
         final_tag = source_code_str.find('<div class="uf">RIO GRANDE DO SUL</div>') + len('<div class="uf">RIO GRANDE DO SUL</div>')
+
+    elif region == 'RS':
+        initial_tag = source_code_str.find('<div class="uf">RIO GRANDE DO SUL</div>') + len('<div class="uf">RIO GRANDE DO SUL</div>')
+        final_tag = source_code_str.find('<div class="uf">SANTA CATARINA</div>') + len('<div class="uf">SANTA CATARINA</div>')
 
     elif region == 'SC':
         initial_tag = source_code_str.find('<div class="uf">SANTA CATARINA</div>') + len('<div class="uf">SANTA CATARINA</div>')
@@ -76,6 +77,10 @@ def exam_region(source_code, region):
 
     elif region == 'AC':
         initial_tag = source_code_str.find('<div class="uf">ACRE</div>') + len('<div class="uf">ACRE</div>')
+        final_tag = source_code_str.find('<div class="uf">AMAPÁ</div>') + len('<div class="uf">AMAPÁ</div>')
+
+    elif region == 'AP':
+        initial_tag = source_code_str.find('<div class="uf">AMAPÁ</div>') + len('<div class="uf">AMAPÁ</div>')
         final_tag = source_code_str.find('<div class="uf">PARÁ</div>') + len('<div class="uf">PARÁ</div>')
 
     elif region == 'PA':
@@ -84,6 +89,10 @@ def exam_region(source_code, region):
 
     elif region == 'RO':
         initial_tag = source_code_str.find('<div class="uf">RONDÔNIA</div>') + len('<div class="uf">RONDÔNIA</div>')
+        final_tag = source_code_str.find('<div class="uf">RORAIMA</div>') + len('<div class="uf">RORAIMA</div>')
+
+    elif region == 'RR':
+        initial_tag = source_code_str.find('<div class="uf">RORAIMA</div>') + len('<div class="uf">RORAIMA</div>')
         final_tag = source_code_str.find('<div class="uf">TOCANTINS</div>') + len('<div class="uf">TOCANTINS</div>')
 
     elif region == 'TO':
@@ -98,11 +107,15 @@ def exam_region(source_code, region):
         initial_tag = source_code_str.find('<div class="uf">BAHIA</div>') + len('<div class="uf">BAHIA</div>')
         final_tag = source_code_str.find('<div class="uf">CEARÁ</div>') + len('<div class="uf">CEARÁ</div>')
 
+    elif region == 'CE':
+        initial_tag = source_code_str.find('<div class="uf">CEARÁ</div>') + len('<div class="uf">CEARÁ</div>')
+        final_tag = source_code_str.find('<div class="uf">MARANHÃO</div>') + len('<div class="uf">MARANHÃO</div>')
+
     elif region == 'MA':
         initial_tag = source_code_str.find('<div class="uf">MARANHÃO</div>') + len('<div class="uf">MARANHÃO</div>')
         final_tag = source_code_str.find('<div class="uf">PARAÍBA</div>') + len('<div class="uf">PARAÍBA</div>')
 
-    elif region == 'PA':
+    elif region == 'PB':
         initial_tag = source_code_str.find('<div class="uf">PARAÍBA</div>') + len('<div class="uf">PARAÍBA</div>')
         final_tag = source_code_str.find('<div class="uf">PERNAMBUCO</div>') + len('<div class="uf">PERNAMBUCO</div>')
 
@@ -127,13 +140,13 @@ def exam_region(source_code, region):
     concursos_tag = source_code_str[initial_tag:final_tag]
     concursos_tag = BeautifulSoup(concursos_tag, "html.parser")
 
-    for line in concursos_tag.findAll(class_='ca'):
+    for line in concursos_tag.find_all(class_='ca'):
         name.append(line.find('a').text.strip())  # Institution's name
         link.append(line.find('a', href=True)['href'])  # Link
-        vagas.append(''.join(re.findall('(\d*) vaga', str(line.find(class_='cd')))))  # Jobs
-        nivel.append('/'.join(re.findall('Superior|Médio', str(line.find(class_='cd')))))  # Education
-        salario.append(''.join(re.findall('R\$ *\d*\.*\d*\,*\d*', str(line.find(class_='cd')))))  # Salary
-        inscricao.append(''.join(re.findall('\d+/\d+/\d+', str(line.find(class_='ce'))))) # Subscription date
+        vagas.append(''.join(re.findall(r'(\d*) vaga', str(line.find(class_='cd')))))  # Jobs
+        nivel.append('/'.join(re.findall(r'Superior|Médio', str(line.find(class_='cd')))))  # Education
+        salario.append(''.join(re.findall(r'R\$ *\d*\.*\d*\,*\d*', str(line.find(class_='cd')))))  # Salary
+        inscricao.append(''.join(re.findall(r'\d+/\d+/\d+', str(line.find(class_='ce'))))) # Subscription date
 
     # Merge lists
     combinacao_concursos.extend([list(i) for i in zip(name, vagas, nivel, salario, inscricao, link)])
